@@ -1,0 +1,62 @@
+﻿@page "/rooms"
+@rendermode InteractiveServer
+@inherits RoomCrudBase
+
+
+<h1>List Rooms</h1>
+
+<button class="btn btn-success mb-3" @onclick="ShowCreateModal">Create Room</button>
+
+@if (showModal)
+{
+    <div class="modal d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">@titleForm</h5>
+                    <button type="button" class="btn-close" @onclick="HideModal"></button>
+                </div>
+                <div class="modal-body">
+                    <RoomForm Model="roomUpserDTO" OnValidSubmit="HandleSubmit" TitleForm="titleForm" />
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@if (rooms != null && rooms.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Capacity</th>
+                <th>Price</th>
+                <th>Available</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var r in rooms)
+            {
+                <tr>
+                    <td>@r.Name</td>
+                    <td>@r.Description</td>
+                    <td>@r.Capacity</td>
+                    <td>@r.Price.ToString("C")</td>
+                    <td>@(r.IsAvailable ? "✅" : "❌")</td>
+                    <td>
+                        <button class="btn btn-sm btn-warning me-2" @onclick="() => ShowUpdateModal(r.Id)">✏</button>
+                        <button class="btn btn-sm btn-danger" @onclick="() => ShowUpdateModal(r.Id)">🗑</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No rooms available.</p>
+}
+
