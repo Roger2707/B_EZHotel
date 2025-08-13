@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using EZHotel.Helpers;
+using System.ComponentModel.DataAnnotations;
 
 namespace EZHotel.DTOs.Rooms
 {
@@ -11,6 +12,7 @@ namespace EZHotel.DTOs.Rooms
         [Required]
         [Range(1, 5)]
         public int Capacity { get; set; }
+        public RoomType RoomType { get; set; } = RoomType.Normal;
         [Required]
         [Range(0.01, double.MaxValue, ErrorMessage = "Price must be greater than zero.")]
         public decimal Price { get; set; }

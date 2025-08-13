@@ -1,22 +1,59 @@
 ﻿using EZHotel.DTOs.Rooms;
 using EZHotel.Services.IServices;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.SignalR.Client;
 
 namespace EZHotel.Components.Pages.Rooms
 {
-    public class RoomCrudBase : ComponentBase
+    public class RoomCrudBase : ComponentBase, IAsyncDisposable
     {
-        public string titleForm = "";
         public bool showModal = false;
         public List<RoomDTO> rooms = null;
-        public RoomUpsertDTO roomUpserDTO = new();
-        private Guid roomUpdateId;
+        public Guid RoomIdSelected;
         [Inject] public IRoomService RoomService { get; set; }
+        [Inject] public NavigationManager NavigationManager { get; set; }
+        public HubConnection? hubConnection;
 
         #region Init / Load
         protected override async Task OnInitializedAsync()
         {
             await LoadRooms();
+
+            #region Connect SignalR
+
+            hubConnection = new HubConnectionBuilder()
+                .WithUrl(NavigationManager.ToAbsoluteUri("/roomHub"))
+                .WithAutomaticReconnect()
+                .Build();
+
+            hubConnection.On<RoomDTO>("RoomSaveChanged", (room) =>
+            {
+                var existing = rooms.FirstOrDefault(r => r.Id == room.Id);
+                if (existing != null)
+                {
+                    existing.Id = room.Id;
+                    existing.Name = room.Name;
+                    existing.Description = room.Description;
+                    existing.Capacity = room.Capacity;
+                    existing.RoomType = room.RoomType;
+                    existing.ImageUrl = room.ImageUrl;
+                    existing.PublicId = room.PublicId;
+                    existing.Price = room.Price;
+                    existing.IsAvailable = room.IsAvailable;
+                    existing.UpdatedAt = room.UpdatedAt;
+                }
+                else 
+                {
+                    rooms.Add(room);
+                    rooms.OrderByDescending(r => r.UpdatedAt).ToList();
+                }
+
+                InvokeAsync(StateHasChanged);
+            });
+
+            await hubConnection.StartAsync();
+
+            #endregion
         }
 
         public async Task LoadRooms()
@@ -30,59 +67,10 @@ namespace EZHotel.Components.Pages.Rooms
 
         public async Task HandleSubmit()
         {
-            try
-            {
-                if (titleForm == "Create") await HandleCreate();
-                else if (titleForm == "Update") await HandleUpdate();
+            HideModal();
 
-                HideModal();
-            }
-            catch (Exception ex)
-            {
-                // Handle validation errors
-               throw new Exception($"Validation error: {ex.Message}");
-            }
-        }
-
-        private async Task HandleCreate()
-        {
-            // Create and Update DB new Room
-            await RoomService.CreateAsync(roomUpserDTO);
-
-            // Update UI
-            rooms.Add(new RoomDTO
-            {
-                Id = Guid.NewGuid(),
-                Name = roomUpserDTO.Name,
-                Description = roomUpserDTO.Description,
-                Price = roomUpserDTO.Price,
-                Capacity = roomUpserDTO.Capacity,
-                ImageUrl = roomUpserDTO.ImageUrl,
-                PublicId = roomUpserDTO.PublicId,
-                IsAvailable = roomUpserDTO.IsAvailable,
-                UpdatedAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
-            });
-        }
-
-        private async Task HandleUpdate()
-        {
-            // Update DB Room
-            await RoomService.UpdateAsync(roomUpdateId, roomUpserDTO);
-
-            // Update UI
-            var room = rooms.FirstOrDefault(r => r.Id == roomUpdateId);
-
-            if (room != null)
-            {
-                room.Name = roomUpserDTO.Name;
-                room.Description = roomUpserDTO.Description;
-                room.Price = roomUpserDTO.Price;
-                room.Capacity = roomUpserDTO.Capacity;
-                room.ImageUrl = roomUpserDTO.ImageUrl;
-                room.PublicId = roomUpserDTO.PublicId;
-                room.IsAvailable = roomUpserDTO.IsAvailable;
-                room.UpdatedAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-            }
+            // Handle Update UI
+            await LoadRooms();
         }
 
         #endregion
@@ -91,35 +79,25 @@ namespace EZHotel.Components.Pages.Rooms
 
         public void ShowCreateModal()
         {
-            roomUpserDTO = new();
+            RoomIdSelected = Guid.Empty;
             showModal = true;
-            titleForm = "Create";
         }
 
-        public async void ShowUpdateModal(Guid roomId)
+        public void ShowUpdateModal(Guid roomId)
         {
-            var existedRoom = await RoomService.GetByIdAsync(roomId);
-
-            roomUpdateId = roomId;
-            // bind data to form
-            roomUpserDTO = new RoomUpsertDTO
-            {
-                Name = existedRoom.Name,
-                Description = existedRoom.Description,
-                Price = existedRoom.Price,
-                Capacity = existedRoom.Capacity,
-                ImageUrl = existedRoom.ImageUrl,
-                PublicId = existedRoom.PublicId,
-                IsAvailable = existedRoom.IsAvailable
-            };
+            RoomIdSelected = roomId;
             showModal = true;
-            titleForm = "Update";
-            StateHasChanged();
         }
 
         public void HideModal()
         {
             showModal = false;
+        }
+
+        public async ValueTask DisposeAsync()
+        {
+            if (hubConnection != null)
+                await hubConnection.DisposeAsync();
         }
 
         #endregion

@@ -1,4 +1,6 @@
-﻿namespace EZHotel.Models
+﻿using EZHotel.DTOs.Rooms;
+
+namespace EZHotel.Models
 {
     public class Room
     {
@@ -6,6 +8,7 @@
         public string Name { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public int Capacity { get; set; }
+        public RoomType RoomType { get; set; } = RoomType.Normal;
         public decimal Price { get; set; } = 0;
         public string ImageUrl { get; set; } = string.Empty;
         public string PublicId { get; set; } = string.Empty;

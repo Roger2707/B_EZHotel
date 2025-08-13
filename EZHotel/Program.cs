@@ -1,5 +1,6 @@
 using EZHotel.Components;
 using EZHotel.Data;
+using EZHotel.Hubs;
 using EZHotel.Infrastructures;
 using EZHotel.Services;
 using EZHotel.Services.IServices;
@@ -19,6 +20,9 @@ builder.Services.AddDbContext<AppDbContext>(opt => opt.UseSqlServer(builder.Conf
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IRoomService, RoomService>();
+builder.Services.AddScoped<IUploadService, UploadService>();
+
+builder.Services.AddSignalR();
 
 var app = builder.Build();
 
@@ -34,6 +38,9 @@ app.UseHttpsRedirection();
 
 app.UseStaticFiles();
 app.UseAntiforgery();
+
+// SignalR Connection
+app.MapHub<RoomHub>("/roomHub");
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
