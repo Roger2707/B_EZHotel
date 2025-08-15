@@ -12,13 +12,15 @@ namespace EZHotel.Components.Pages.Rooms
     {
         [Parameter] public Guid RoomId { get; set; }
         [Parameter] public EventCallback OnValidSubmit { get; set; }
+        [Inject] public IRoomService RoomService { get; set; }
+        [Inject] public IUploadService UploadService { get; set; }
+        [Inject] public IHubContext<RoomHub> RoomHubContext { get; set; }
+
         public string? errorMessage;
         public List<string> ImagePreviews = new();
         public List<IBrowserFile> SelectedFiles = new();
         public RoomUpsertDTO Model { get; set; } = new RoomUpsertDTO();
-        [Inject] public IRoomService RoomService { get; set; }
-        [Inject] public IUploadService UploadService { get; set; }
-        [Inject] public IHubContext<RoomHub> RoomHubContext { get; set; }
+        public bool isLoading = false;
 
         protected override async Task OnInitializedAsync()
         {
@@ -95,6 +97,8 @@ namespace EZHotel.Components.Pages.Rooms
             {
                 if (OnValidSubmit.HasDelegate)
                 {
+                    isLoading = true;
+
                     await HandleSaveImages();
 
                     if (RoomId == Guid.Empty) await HandleCreate();
@@ -122,6 +126,10 @@ namespace EZHotel.Components.Pages.Rooms
             catch (Exception ex)
             {
                 errorMessage = ex.Message;
+            }
+            finally
+            {
+                isLoading = false;
             }
         }
 

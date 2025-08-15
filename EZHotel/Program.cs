@@ -21,6 +21,7 @@ builder.Services.AddDbContext<AppDbContext>(opt => opt.UseSqlServer(builder.Conf
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IRoomService, RoomService>();
 builder.Services.AddScoped<IUploadService, UploadService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 builder.Services.AddSignalR();
 

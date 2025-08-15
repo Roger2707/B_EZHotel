@@ -1,89 +1,94 @@
-﻿@using EZHotel.DTOs.Rooms
+﻿@using EZHotel.Components.Layout
+@using EZHotel.DTOs.Rooms
 @using EZHotel.Helpers
 @inherits RoomFormBase
 
-<EditForm Model="Model" OnValidSubmit="HandleValidSubmit">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
+<div class="position-relative">
+    <Spinner IsLoading="@isLoading" />
 
-    <div class="row">
-        <div class="col-md-6">
-            <div class="mb-3">
-                <label>Name</label>
-                <InputText class="form-control" @bind-Value="Model.Name" />
-            </div>
+    <EditForm Model="Model" OnValidSubmit="HandleValidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
 
-            <div class="mb-3">
-                <label>Description</label>
-                <InputTextArea class="form-control" @bind-Value="Model.Description" />
-            </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label>Name</label>
+                    <InputText class="form-control" @bind-Value="Model.Name" />
+                </div>
 
-            <div class="mb-3">
-                <label>Capacity</label>
-                <InputNumber class="form-control"
-                             Value="@Model.Capacity"
-                             ValueChanged="@((int newCapacity) => OnCapacityChanged(newCapacity))"
-                             ValueExpression="() => Model.Capacity" />
-            </div>
+                <div class="mb-3">
+                    <label>Description</label>
+                    <InputTextArea class="form-control" @bind-Value="Model.Description" />
+                </div>
 
-            <div class="mb-3">
-                <label>Room Type</label>
-                <InputSelect class="form-control"
-                             Value="@Model.RoomType"
-                             ValueChanged="@((RoomType newRoomType) => OnRoomTypeChanged(newRoomType))"
-                             ValueExpression="() => Model.RoomType"
-                >
-                    @foreach (RoomType type in Enum.GetValues(typeof(RoomType)))
-                    {
-                        <option value="@type">@BF.GetDisplayNameEnum(type)</option>
-                    }
-                </InputSelect>
-            </div>
+                <div class="mb-3">
+                    <label>Capacity</label>
+                    <InputNumber class="form-control"
+                                 Value="@Model.Capacity"
+                                 ValueChanged="@((int newCapacity) => OnCapacityChanged(newCapacity))"
+                                 ValueExpression="() => Model.Capacity" />
+                </div>
 
-            <div class="mb-3">
-                <label>Price</label>
-                <InputNumber class="form-control readonly-input" @bind-Value="Model.Price" readonly />
-            </div>
+                <div class="mb-3">
+                    <label>Room Type</label>
+                    <InputSelect class="form-control"
+                                 Value="@Model.RoomType"
+                                 ValueChanged="@((RoomType newRoomType) => OnRoomTypeChanged(newRoomType))"
+                                 ValueExpression="() => Model.RoomType"
+                    >
+                        @foreach (RoomType type in Enum.GetValues(typeof(RoomType)))
+                        {
+                            <option value="@type">@BF.GetDisplayNameEnum(type)</option>
+                        }
+                    </InputSelect>
+                </div>
 
-            <div class="form-check mb-3">
-                <InputCheckbox class="form-check-input" @bind-Value="Model.IsAvailable" />
-                <label class="form-check-label">Available</label>
-            </div>
+                <div class="mb-3">
+                    <label>Price</label>
+                    <InputNumber class="form-control readonly-input" @bind-Value="Model.Price" readonly />
+                </div>
 
-            @if (!string.IsNullOrEmpty(errorMessage))
-            {
-                <div class="alert alert-danger">@errorMessage</div>
-            }
+                <div class="form-check mb-3">
+                    <InputCheckbox class="form-check-input" @bind-Value="Model.IsAvailable" />
+                    <label class="form-check-label">Available</label>
+                </div>
 
-            <button class="btn btn-primary" type="submit">Save</button>
-        </div>
-
-        <div class="col-md-6">
-            <div class="row">
-                @if (ImagePreviews != null && ImagePreviews.Count > 0)
+                @if (!string.IsNullOrEmpty(errorMessage))
                 {
-                    @for (int i = 0; i < ImagePreviews.Count; i++)
+                    <div class="alert alert-danger">@errorMessage</div>
+                }
+
+                <button class="btn btn-primary" disabled="@isLoading" type="submit">@(isLoading ? "Saving..." : "Save")</button>
+            </div>
+
+            <div class="col-md-6">
+                <div class="row">
+                    @if (ImagePreviews != null && ImagePreviews.Count > 0)
                     {
-                        <div class="col-6 mb-3">
-                            <img src="@ImagePreviews[i]" class="img-fluid border rounded" alt="Image @(i+1)" />
+                        @for (int i = 0; i < ImagePreviews.Count; i++)
+                        {
+                            <div class="col-6 mb-3">
+                                <img src="@ImagePreviews[i]" class="img-fluid border rounded" alt="Image @(i+1)" />
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="col-12 mb-3 d-flex align-items-center justify-content-center"
+                             style="background-color: #e0e0e0; height: 200px; border-radius: 8px;">
                         </div>
                     }
-                }
-                else
-                {
-                    <div class="col-12 mb-3 d-flex align-items-center justify-content-center"
-                         style="background-color: #e0e0e0; height: 200px; border-radius: 8px;">
-                    </div>
-                }
-            </div>
+                </div>
 
-            <label class="btn btn-primary">
-                Select files
-                <InputFile OnChange="OnImagesSelected" multiple style="display:none;" />
-            </label>
+                <label class="btn btn-primary">
+                    Select files
+                    <InputFile OnChange="OnImagesSelected" multiple style="display:none;" />
+                </label>
+            </div>
         </div>
-    </div>
-</EditForm>
+    </EditForm>
+</div>
 
 <style>
     .readonly-input[readonly] {

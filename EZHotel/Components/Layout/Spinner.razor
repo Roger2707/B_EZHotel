@@ -1,0 +1,30 @@
+﻿<div class="@($"loading-overlay {(IsLoading ? "show" : "")}")">
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+</div>
+
+@code {
+    [Parameter] public bool IsLoading { get; set; }
+}
+
+
+<style>
+    .loading-overlay {
+        display: none;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.7);
+        z-index: 999;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .loading-overlay.show {
+        display: flex;
+    }
+
+</style>

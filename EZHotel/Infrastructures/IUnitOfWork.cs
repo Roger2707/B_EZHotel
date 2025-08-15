@@ -10,5 +10,6 @@ namespace EZHotel.Infrastructures
         Task RollbackAsync();
 
         public IRoomRepository Room { get; }
+        public IUserRepository User { get; }
     }
 }

@@ -1,0 +1,118 @@
+﻿@page "/users"
+@using EZHotel.DTOs.Users
+@using EZHotel.Helpers
+@rendermode InteractiveServer
+@inherits UsersListBase
+
+<h3>Users List:</h3>
+<button class="btn btn-success mb-3" @onclick="ShowCreateModal">Create User</button>
+
+@if (showModal)
+{
+    <div class="modal d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">@(UserIdSelected != Guid.Empty ? $"Edit User {UserIdSelected}" : "Create User")</h5>
+                    <button type="button" class="btn-close" @onclick="HideModal"></button>
+                </div>
+                <div class="modal-body px-5">
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@if (usersDTO != null && usersDTO.Any())
+{
+    <div style="overflow-x: auto; max-width: 100%;">
+        <table class="table table-bordered table-hover table-sm align-middle text-nowrap">
+            <thead class="table-light" >
+                <tr>
+                    <th>Avatar</th>
+                    <th>FullName</th>
+                    <th>UserName</th>
+                    <th>Email</th>
+                    <th>PhoneNumber</th>
+                    <th>Birthday</th>
+                    <th>Address</th>
+                    <th>Role</th>
+                    <th>Is Active</th>
+
+                    <th>EmployeeCode</th>
+                    <th>Position</th>
+                    <th>HireDate</th>
+                    <th>Salary</th>
+                    <th>BankAccount</th>
+                    <th>Emergency Contact</th>
+                    <th>Certifications</th>
+
+                    <th>ApprovalLimit</th>
+                    <th>PerformanceBonusRate</th>
+                    <th>AuthorityLevel</th>
+
+                    <th>LoyaltyPoints</th>
+                    <th>Nationality</th>
+                    <th>PassportNumber</th>
+                    <th>PreferredRoomType</th>
+                    <th>PaymentMethod</th>
+                    <th>SpecialRequest</th>
+
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var userDTO in usersDTO)
+                {
+                    var roleClass = userDTO.RoleName.ToLower() switch
+                    {
+                        "manager" => "table-danger",
+                        "staff" => "table-warning",
+                        "customer" => "table-info",
+                        _ => "table-secondary"
+                    };
+                    <tr class="@roleClass">
+                        <td>@userDTO.Avatar</td>
+                        <td>@userDTO.FullName</td>
+                        <td>@userDTO.UserName</td>
+                        <td>@userDTO.Email</td>
+                        <td>@userDTO.PhoneNumber</td>
+                        <td>@userDTO.Birthday</td>
+                        <td>@userDTO.Address</td>
+                        <td>@userDTO.RoleName</td>
+                        <td>@(userDTO.IsActive ? "✅" : "❌")</td>
+
+                        <td>@((userDTO as StaffDTO)?.EmployeeCode)</td>
+                        <td>@((userDTO as StaffDTO)?.Position)</td>
+                        <td>@((userDTO as StaffDTO)?.HireDate)</td>
+                        <td>@((userDTO as StaffDTO)?.Salary)</td>
+                        <td>@((userDTO as StaffDTO)?.BankAccount)</td>
+                        <td>@((userDTO as StaffDTO)?.EmergencyContact)</td>
+                        <td>@((userDTO as StaffDTO)?.Certifications)</td>
+
+                        <td>@((userDTO as ManagerDTO)?.ApprovalLimit)</td>
+                        <td>@((userDTO as ManagerDTO)?.PerformanceBonusRate)</td>
+                        <td>@((userDTO as ManagerDTO)?.AuthorityLevel)</td>
+
+                        <td>@((userDTO as CustomerDTO)?.LoyaltyPoints)</td>
+                        <td>@((userDTO as CustomerDTO)?.Nationality)</td>
+                        <td>@((userDTO as CustomerDTO)?.PassportNumber)</td>
+                        <td>@(((userDTO as CustomerDTO)?.PreferredRoomType is { } roomType) ? BF.GetDisplayNameEnum(roomType) : "")</td>
+                        <td>@((userDTO as CustomerDTO)?.PaymentMethod)</td>
+                        <td>@((userDTO as CustomerDTO)?.SpecialRequest)</td>
+
+                        <td>
+                            <button class="btn btn-sm btn-warning me-2" @onclick="() => ShowUpdateModal(userDTO.Id)">✏</button>
+                            <button class="btn btn-sm btn-danger" @onclick="() => ShowUpdateModal(userDTO.Id)">🗑</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <p>No rooms available.</p>
+}

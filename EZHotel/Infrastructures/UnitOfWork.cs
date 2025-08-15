@@ -1,8 +1,6 @@
-﻿
-using EZHotel.Data;
+﻿using EZHotel.Data;
 using EZHotel.Repositories;
 using EZHotel.Repositories.IRepositories;
-using Microsoft.EntityFrameworkCore;
 
 namespace EZHotel.Infrastructures
 {
@@ -13,9 +11,12 @@ namespace EZHotel.Infrastructures
         {
             _db = db;
             Room = new RoomRepository(_db);
+            User = new UserRepository(_db);
         }
 
         public IRoomRepository Room { get; private set; }
+
+        public IUserRepository User { get; private set; }
 
         public async Task BeginTransactionAsync()
         {

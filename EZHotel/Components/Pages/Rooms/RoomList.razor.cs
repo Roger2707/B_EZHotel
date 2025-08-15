@@ -65,12 +65,9 @@ namespace EZHotel.Components.Pages.Rooms
 
         #region CRUD
 
-        public async Task HandleSubmit()
+        public void HandleSubmit()
         {
             HideModal();
-
-            // Handle Update UI
-            await LoadRooms();
         }
 
         #endregion

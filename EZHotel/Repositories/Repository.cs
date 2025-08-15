@@ -52,7 +52,8 @@ namespace EZHotel.Repositories
             return await _dbSet.ToListAsync();
         }
 
-        public async Task<IEnumerable<T>> GetAllAsync<TFilter>(TFilter filter, Func<TFilter, Expression<Func<T, bool>>> filterBuilder, params Expression<Func<T, object>>[] includes)
+        public async Task<IEnumerable<T>> GetAllAsync<TFilter>(TFilter? filter = default
+            , Func<TFilter, Expression<Func<T, bool>>>? filterBuilder = null, params Expression<Func<T, object>>[]? includes)
         {
             IQueryable<T> query = _dbSet;
 
@@ -64,8 +65,11 @@ namespace EZHotel.Repositories
                 }
             }
 
-            var predicate = filterBuilder(filter);
-            query = query.Where(predicate);
+            if (filterBuilder != null && filter != null)
+            {
+                var predicate = filterBuilder(filter);
+                query = query.Where(predicate);
+            }
 
             return await query.ToListAsync();
         }
@@ -81,6 +85,16 @@ namespace EZHotel.Repositories
                 }
             }
             return await query.FirstOrDefaultAsync(predicate);
+        }
+
+        #endregion
+
+        #region Check
+
+        public async Task<bool> AnyAsync(Expression<Func<T, bool>> predicate)
+        {
+            IQueryable<T> query = _dbSet;
+            return await query.AnyAsync(predicate);
         }
 
         #endregion

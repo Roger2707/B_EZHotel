@@ -4,6 +4,7 @@ using EZHotel.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EZHotel.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250814063727_createUserRoleModel")]
+    partial class createUserRoleModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -73,23 +76,6 @@ namespace EZHotel.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Roles");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("619d7706-770c-47ac-92a4-7e5c741edc78"),
-                            Name = "Manager"
-                        },
-                        new
-                        {
-                            Id = new Guid("b0a9cc22-2046-45a6-accf-da011b819870"),
-                            Name = "Staff"
-                        },
-                        new
-                        {
-                            Id = new Guid("6e44c69b-e62f-42cf-bd59-12f29e83a6dc"),
-                            Name = "Customer"
-                        });
                 });
 
             modelBuilder.Entity("EZHotel.Models.Users.User", b =>
@@ -166,30 +152,6 @@ namespace EZHotel.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.ToTable("Customers");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("30785cf6-960b-4c7a-9f14-012e325eaedf"),
-                            Address = "321 Main St",
-                            Avatar = "",
-                            Birthday = new DateTime(1995, 10, 16, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedAt = new DateTime(2025, 8, 15, 3, 35, 42, 265, DateTimeKind.Utc).AddTicks(9031),
-                            Email = "customer@example.com",
-                            FullName = "Quincy Thai",
-                            HashPassword = "$2a$11$Y79OHzHIfzaDDnW6safgouXvaEkUAeyg4aA9Q.MsCnWmuHmNfBiI6",
-                            IsActive = true,
-                            PhoneNumber = "0934567890",
-                            PublicId = "",
-                            RoleId = new Guid("6e44c69b-e62f-42cf-bd59-12f29e83a6dc"),
-                            UserName = "quincy",
-                            LoyaltyPoints = 100,
-                            Nationality = "Vietnam",
-                            PassportNumber = "A12345678",
-                            PaymentMethod = 1,
-                            PreferredRoomType = 1,
-                            SpecialRequest = "Late check-in"
-                        });
                 });
 
             modelBuilder.Entity("EZHotel.Models.Users.Staff", b =>
@@ -219,31 +181,6 @@ namespace EZHotel.Migrations
                         .HasColumnType("decimal(10,2)");
 
                     b.ToTable("Staffs");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("4bb57790-0eec-473d-94e4-768d2da58c18"),
-                            Address = "456 Main St",
-                            Avatar = "",
-                            Birthday = new DateTime(1993, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedAt = new DateTime(2025, 8, 15, 3, 35, 41, 951, DateTimeKind.Utc).AddTicks(6893),
-                            Email = "staff@example.com",
-                            FullName = "Simon Nguyen",
-                            HashPassword = "$2a$11$y2z6KOHHiyAge8MT3U8zLOM3TP2kzKAqBfZfSKBBC21PSmZRGzzyG",
-                            IsActive = true,
-                            PhoneNumber = "0987654321",
-                            PublicId = "",
-                            RoleId = new Guid("b0a9cc22-2046-45a6-accf-da011b819870"),
-                            UserName = "simon",
-                            BankAccount = "1234567890",
-                            Certifications = "Hotel Management",
-                            EmergencyContact = "0901234567",
-                            EmployeeCode = "EMP001",
-                            HireDate = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Position = "Leader - Customer Service",
-                            Salary = 500m
-                        });
                 });
 
             modelBuilder.Entity("EZHotel.Models.Users.Manager", b =>
@@ -262,34 +199,6 @@ namespace EZHotel.Migrations
                         .HasColumnType("decimal(10,2)");
 
                     b.ToTable("Managers");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("d6085050-f6d7-43d7-9fa3-c0b4e9ac279f"),
-                            Address = "789 Main St",
-                            Avatar = "",
-                            Birthday = new DateTime(1999, 7, 27, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedAt = new DateTime(2025, 8, 15, 3, 35, 42, 109, DateTimeKind.Utc).AddTicks(3477),
-                            Email = "rogerhuynh2707@gmail.com",
-                            FullName = "Roger Huynh",
-                            HashPassword = "$2a$11$IIh7kGEAS4exB7SI18PifOGWF8Ea910ihVsRPLJ7QMeCsyOEeZC.O",
-                            IsActive = true,
-                            PhoneNumber = "0776198888",
-                            PublicId = "",
-                            RoleId = new Guid("619d7706-770c-47ac-92a4-7e5c741edc78"),
-                            UserName = "roger",
-                            BankAccount = "9876543210",
-                            Certifications = "Leadership",
-                            EmergencyContact = "0909876543",
-                            EmployeeCode = "MGR001",
-                            HireDate = new DateTime(2015, 5, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Position = "Hotel Manager",
-                            Salary = 2000m,
-                            ApprovalLimit = 5000m,
-                            AuthorityLevel = 3,
-                            PerformanceBonusRate = 0.1m
-                        });
                 });
 
             modelBuilder.Entity("EZHotel.Models.Users.User", b =>
